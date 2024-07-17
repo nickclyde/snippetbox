@@ -9,10 +9,12 @@ import (
 	"os"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/nickclyde/snippetbox/internal/models"
 )
 
 type application struct {
-	logger *slog.Logger
+	logger   *slog.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
@@ -29,7 +31,7 @@ func main() {
 	}
 	defer db.Close()
 
-	app := &application{logger}
+	app := &application{logger, &models.SnippetModel{DB: db}}
 
 	logger.Info("starting server", slog.String("addr", *addr))
 
