@@ -35,7 +35,10 @@ func (m *SnippetModel) Insert(title string, content string, expires int) (int, e
 func (m *SnippetModel) Get(id int) (Snippet, error) {
 	var s Snippet
 
-	err := m.DB.QueryRow("SELECT ...", id).Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
+	stmt := `SELECT id, title, content, created, expires FROM snippets
+    WHERE expires > NOW() AND id = $1`
+
+	err := m.DB.QueryRow(stmt, id).Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Snippet{}, ErrNoRecord
@@ -70,8 +73,8 @@ func (m *SnippetModel) Latest() ([]Snippet, error) {
 	}
 
 	if err = rows.Err(); err != nil {
-        return nil, err
-    }
+		return nil, err
+	}
 
 	return snippets, nil
 }
