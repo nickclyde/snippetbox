@@ -7,14 +7,16 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"text/template"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/nickclyde/snippetbox/internal/models"
 )
 
 type application struct {
-	logger   *slog.Logger
-	snippets *models.SnippetModel
+	logger        *slog.Logger
+	snippets      *models.SnippetModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
@@ -31,7 +33,17 @@ func main() {
 	}
 	defer db.Close()
 
-	app := &application{logger, &models.SnippetModel{DB: db}}
+	templaceCache, err := newTemplateCache()
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+
+	app := &application{
+		logger,
+		&models.SnippetModel{DB: db},
+		templaceCache,
+	}
 
 	logger.Info("starting server", slog.String("addr", *addr))
 
