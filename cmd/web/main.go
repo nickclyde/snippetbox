@@ -25,11 +25,13 @@ type application struct {
 	templateCache  map[string]*template.Template
 	formDecoder    *form.Decoder
 	sessionManager *scs.SessionManager
+	debug          bool
 }
 
 func main() {
 	addr := flag.String("addr", "localhost:4000", "HTTP network address")
 	dsn := flag.String("dsn", "postgresql://nick@localhost:5432/snippetbox", "PostgreSQL data source name")
+	debug := flag.Bool("debug", false, "Debug mode")
 	flag.Parse()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
@@ -61,6 +63,7 @@ func main() {
 		templaceCache,
 		formDecoder,
 		sessionManager,
+		*debug,
 	}
 
 	tlsConfig := &tls.Config{
