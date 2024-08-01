@@ -198,8 +198,6 @@ func TestSnippetCreate(t *testing.T) {
 	ts := newTestServer(t, app.routes())
 	defer ts.Close()
 
-	// _, _, body := ts.get(t, "/snippet/create")
-
 	t.Run("Unauthenticated", func(t *testing.T) {
 		code, headers, _ := ts.get(t, "/snippet/create")
 		assert.Equal(t, code, http.StatusSeeOther)
