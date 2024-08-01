@@ -1,8 +1,14 @@
 package mocks
 
-import "github.com/nickclyde/snippetbox/internal/models"
+import (
+	"time"
+
+	"github.com/nickclyde/snippetbox/internal/models"
+)
 
 type UserModel struct{}
+
+type User = models.User
 
 func (m *UserModel) Insert(name, email, password string) error {
 	switch email {
@@ -27,5 +33,14 @@ func (m *UserModel) Exists(id int) (bool, error) {
 		return true, nil
 	default:
 		return false, nil
+	}
+}
+
+func (m *UserModel) Get(id int) (User, error) {
+	switch id {
+	case 1:
+		return User{ID: 1, Name: "Alice", Email: "alice@example.com", Created: time.Now()}, nil
+	default:
+		return User{}, models.ErrNoRecord
 	}
 }
